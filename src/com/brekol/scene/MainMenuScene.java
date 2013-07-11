@@ -1,5 +1,6 @@
 package com.brekol.scene;
 
+import com.brekol.manager.SceneManager;
 import com.brekol.util.SceneType;
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -79,6 +80,7 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()){
             case MENU_PLAY:
+                SceneManager.getInstance().loadGameScene();
                 return true;
             case MENU_OPTIONS:
                 return true;

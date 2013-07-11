@@ -55,13 +55,18 @@ public class ResourcesManager {
     private void loadMenuFonts() {
         FontFactory.setAssetBasePath("font/");
         final ITexture mediumFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        mediumFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), mediumFontTexture, activity.getAssets(), "mediumFont.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
+        mediumFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), mediumFontTexture, activity.getAssets(), "mediumFont.ttf", 50, true, Color.WHITE, 2, Color.WHITE);
+        mediumFont.load();
     }
 
     public void loadGameResources() {
         loadGameGraphics();
         loadGameFonts();
         loadGameAudio();
+    }
+
+    public void loadMenuTextures(){
+        menuTextureAtlas.load();
     }
 
     private void loadMenuGraphics() {
@@ -105,6 +110,14 @@ public class ResourcesManager {
         splashTextureAtlas.load();
 
 
+    }
+
+    public void unloadGameTextures(){
+
+    }
+
+    public void unloadMenuTextures(){
+        menuTextureAtlas.unload();
     }
 
     public void unloadSplashScreen() {

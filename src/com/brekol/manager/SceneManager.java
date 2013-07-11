@@ -1,11 +1,10 @@
 package com.brekol.manager;
 
-import com.brekol.scene.BaseScene;
-import com.brekol.scene.LoadingScene;
-import com.brekol.scene.MainMenuScene;
-import com.brekol.scene.SplashScene;
+import com.brekol.scene.*;
 import com.brekol.util.SceneType;
 import org.andengine.engine.Engine;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.ui.IGameInterface;
 
 /**
@@ -63,6 +62,34 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(menuScene);
         disposeSplashScene();
+    }
+
+    public void loadGameScene(){
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        engine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadGameResources();
+                gameScene = new GameScene();
+                setScene(gameScene);
+            }
+        }));
+    }
+
+    public void loadMenuScene(){
+        setScene(loadingScene);
+        gameScene.disposeScene();
+        ResourcesManager.getInstance().unloadGameTextures();
+        engine.registerUpdateHandler(new TimerHandler(0.5f,new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadMenuTextures();
+                setScene(menuScene);
+            }
+        }));
     }
 
 

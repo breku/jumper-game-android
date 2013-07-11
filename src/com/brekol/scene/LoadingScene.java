@@ -13,7 +13,7 @@ public class LoadingScene extends BaseScene {
 
     @Override
     public void createScene() {
-        setBackground(new Background(Color.WHITE));
+        setBackground(new Background(Color.BLACK));
         attachChild(new Text(400,240,resourcesManager.getMediumFont(),"Loading...",vertexBufferObjectManager));
     }
 

@@ -17,6 +17,7 @@ import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.util.level.simple.SimpleLevelLoader;
 
 
 /**
@@ -33,10 +34,12 @@ public class ResourcesManager {
     private VertexBufferObjectManager vertexBufferObjectManager;
     private Font mediumFont;
 
-    private ITextureRegion splashTextureRegion, menuBackgroundRegion, playButtonRegion, optionsButtonRegion;
+    private ITextureRegion splashTextureRegion, menuBackgroundRegion, playButtonRegion, optionsButtonRegion,
+            platform1Region, platform2Region, platform3Region, coinRegion;
     private BitmapTextureAtlas splashTextureAtlas;
 
     private BuildableBitmapTextureAtlas menuTextureAtlas;
+    private BuildableBitmapTextureAtlas gameTextureAtlas;
 
 
     public static void prepareManager(Engine engine, BaseGameActivity activity, Camera camera, VertexBufferObjectManager vertexBufferObjectManager) {
@@ -65,7 +68,7 @@ public class ResourcesManager {
         loadGameAudio();
     }
 
-    public void loadMenuTextures(){
+    public void loadMenuTextures() {
         menuTextureAtlas.load();
     }
 
@@ -92,6 +95,24 @@ public class ResourcesManager {
 
     private void loadGameGraphics() {
 
+        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+        gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+
+        platform1Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform1.png");
+        platform2Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform2.png");
+        platform3Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform3.png");
+        coinRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas,activity,"coin.png");
+
+
+
+
+        try {
+            gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0,1,0));
+            gameTextureAtlas.load();
+        } catch (ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void loadGameFonts() {
@@ -112,11 +133,11 @@ public class ResourcesManager {
 
     }
 
-    public void unloadGameTextures(){
+    public void unloadGameTextures() {
 
     }
 
-    public void unloadMenuTextures(){
+    public void unloadMenuTextures() {
         menuTextureAtlas.unload();
     }
 
@@ -164,5 +185,21 @@ public class ResourcesManager {
 
     public Font getMediumFont() {
         return mediumFont;
+    }
+
+    public ITextureRegion getPlatform1Region() {
+        return platform1Region;
+    }
+
+    public ITextureRegion getPlatform2Region() {
+        return platform2Region;
+    }
+
+    public ITextureRegion getPlatform3Region() {
+        return platform3Region;
+    }
+
+    public ITextureRegion getCoinRegion() {
+        return coinRegion;
     }
 }

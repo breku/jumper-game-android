@@ -82,7 +82,7 @@ public class SceneManager {
         setScene(loadingScene);
         gameScene.disposeScene();
         ResourcesManager.getInstance().unloadGameTextures();
-        engine.registerUpdateHandler(new TimerHandler(0.5f,new ITimerCallback() {
+        engine.registerUpdateHandler(new TimerHandler(0.3f,new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 engine.unregisterUpdateHandler(pTimerHandler);

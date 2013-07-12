@@ -3,7 +3,7 @@ package com.brekol.scene;
 import com.brekol.util.SceneType;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.text.Text;
-import org.andengine.util.color.Color;
+import org.andengine.util.adt.color.Color;
 
 /**
  * User: Breku

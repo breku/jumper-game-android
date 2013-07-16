@@ -28,6 +28,8 @@ public abstract class Player extends AnimatedSprite {
 
     public abstract void onDie();
 
+
+
     private void createPhysics(final Camera camera, PhysicsWorld physicsWorld) {
         body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyDef.BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
         body.setUserData("player");
@@ -38,7 +40,7 @@ public abstract class Player extends AnimatedSprite {
             public void onUpdate(float pSecondsElapsed) {
                 super.onUpdate(pSecondsElapsed);
                 camera.onUpdate(pSecondsElapsed);
-                if (getX() <= 0) {
+                if (getY() <= 0) {
                     onDie();
                 }
 

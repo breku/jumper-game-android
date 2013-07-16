@@ -31,7 +31,7 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 public class MyActivity extends BaseGameActivity {
 
-    private Camera camera;
+    private BoundCamera camera;
     private Scene scene;
     private ResourcesManager resourcesManager;
 

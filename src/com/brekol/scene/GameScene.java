@@ -59,6 +59,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER = "player";
     private Player player;
     private boolean firstTouch = false;
+    private Text gameOverText;
+    private boolean gameOverDisplayed = false;
 
     @Override
     public void createScene() {
@@ -66,6 +68,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         createHUD();
         createPhysics();
         loadLevel(1);
+        createGameOverText();
         setOnSceneTouchListener(this);
     }
 
@@ -156,12 +159,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                         protected void onManagedUpdate(float pSecondsElapsed) {
                             super.onManagedUpdate(pSecondsElapsed);
 
-                            /**
-                             * TODO
-                             * we will later check if player collide with this (coin)
-                             * and if it does, we will increase score and hide coin
-                             * it will be completed in next articles (after creating player code)
-                             */
+                            if(player.collidesWith(this)){
+                                addToScore(10);
+                                this.setVisible(false);
+                                setIgnoreUpdate(true);
+                            }
                         }
                     };
 
@@ -171,7 +173,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                     player = new Player(x, y, vertexBufferObjectManager, camera, physicsWorld) {
                         @Override
                         public void onDie() {
-                            //To change body of implemented methods use File | Settings | File Templates.
+                            if(!gameOverDisplayed){
+                                displayGameOverText();
+                            }
                         }
                     };
                     levelObject = player;
@@ -202,5 +206,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
             }
         }
         return false;
+    }
+
+    private void createGameOverText(){
+        gameOverText = new Text(0,0,resourcesManager.getMediumFont(),"Game Over!",vertexBufferObjectManager);
+    }
+
+    private void displayGameOverText(){
+        camera.setChaseEntity(null);
+        gameOverText.setPosition(camera.getCenterX(),camera.getCenterY());
+        attachChild(gameOverText);
+        gameOverDisplayed = true;
     }
 }

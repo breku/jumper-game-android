@@ -14,6 +14,7 @@ import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
 import org.andengine.engine.FixedStepEngine;
 import org.andengine.engine.LimitedFPSEngine;
+import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -42,7 +43,7 @@ public class MyActivity extends BaseGameActivity {
 
     @Override
     public EngineOptions onCreateEngineOptions() {
-        camera = new Camera(0, 0, 800, 480);
+        camera = new BoundCamera(0, 0, 800, 480);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
         engineOptions.getAudioOptions().setNeedsMusic(true);

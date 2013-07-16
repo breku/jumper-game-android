@@ -6,11 +6,14 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.brekol.manager.SceneManager;
+import com.brekol.model.Player;
 import com.brekol.util.SceneType;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.ScaleModifier;
+import org.andengine.entity.scene.IOnSceneTouchListener;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
@@ -19,6 +22,7 @@ import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
@@ -35,7 +39,7 @@ import java.io.IOException;
  * User: Breku
  * Date: 01.07.13
  */
-public class GameScene extends BaseScene {
+public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
     private HUD gameHUD;
     private Text scoreText;
@@ -52,12 +56,17 @@ public class GameScene extends BaseScene {
     private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3 = "platform3";
     private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN = "coin";
 
+    private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER = "player";
+    private Player player;
+    private boolean firstTouch = false;
+
     @Override
     public void createScene() {
         createBackground();
         createHUD();
         createPhysics();
         loadLevel(1);
+        setOnSceneTouchListener(this);
     }
 
     @Override
@@ -74,6 +83,7 @@ public class GameScene extends BaseScene {
     public void disposeScene() {
         camera.setHUD(null);
         camera.setCenter(400, 240);
+        camera.setChaseEntity(null);
     }
 
     private void createBackground() {
@@ -110,6 +120,10 @@ public class GameScene extends BaseScene {
             public IEntity onLoadEntity(String pEntityName, IEntity pParent, Attributes pAttributes, SimpleLevelEntityLoaderData pEntityLoaderData) throws IOException {
                 final int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
                 final int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
+
+                camera.setBounds(0, 0, width, height);
+                camera.setBoundsEnabled(true);
+
                 return GameScene.this;
             }
         });
@@ -152,6 +166,16 @@ public class GameScene extends BaseScene {
                     };
 
                     levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
+                } else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER)) {
+
+                    player = new Player(x, y, vertexBufferObjectManager, camera, physicsWorld) {
+                        @Override
+                        public void onDie() {
+                            //To change body of implemented methods use File | Settings | File Templates.
+                        }
+                    };
+                    levelObject = player;
+
                 } else {
                     throw new IllegalArgumentException();
                 }
@@ -165,5 +189,18 @@ public class GameScene extends BaseScene {
 
         levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
 
+    }
+
+    @Override
+    public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+        if (pSceneTouchEvent.isActionDown()) {
+            if (!firstTouch) {
+                player.setRunning();
+                firstTouch = true;
+            } else {
+                player.jump();
+            }
+        }
+        return false;
     }
 }

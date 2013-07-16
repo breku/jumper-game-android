@@ -3,6 +3,7 @@ package com.brekol.manager;
 import android.app.Activity;
 import android.graphics.Color;
 import org.andengine.engine.Engine;
+import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.Camera;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -15,6 +16,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.level.simple.SimpleLevelLoader;
@@ -30,19 +32,20 @@ public class ResourcesManager {
 
     private BaseGameActivity activity;
     private Engine engine;
-    private Camera camera;
+    private BoundCamera camera;
     private VertexBufferObjectManager vertexBufferObjectManager;
     private Font mediumFont;
 
     private ITextureRegion splashTextureRegion, menuBackgroundRegion, playButtonRegion, optionsButtonRegion,
             platform1Region, platform2Region, platform3Region, coinRegion;
-    private BitmapTextureAtlas splashTextureAtlas;
+    private ITiledTextureRegion playerRegion;
 
+    private BitmapTextureAtlas splashTextureAtlas;
     private BuildableBitmapTextureAtlas menuTextureAtlas;
     private BuildableBitmapTextureAtlas gameTextureAtlas;
 
 
-    public static void prepareManager(Engine engine, BaseGameActivity activity, Camera camera, VertexBufferObjectManager vertexBufferObjectManager) {
+    public static void prepareManager(Engine engine, BaseGameActivity activity, BoundCamera camera, VertexBufferObjectManager vertexBufferObjectManager) {
         getInstance().engine = engine;
         getInstance().activity = activity;
         getInstance().camera = camera;
@@ -101,13 +104,12 @@ public class ResourcesManager {
         platform1Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform1.png");
         platform2Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform2.png");
         platform3Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform3.png");
-        coinRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas,activity,"coin.png");
+        coinRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "coin.png");
 
-
-
+        playerRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "player.png", 3, 1);
 
         try {
-            gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0,1,0));
+            gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
             gameTextureAtlas.load();
         } catch (ITextureAtlasBuilder.TextureAtlasBuilderException e) {
             e.printStackTrace();
@@ -159,7 +161,7 @@ public class ResourcesManager {
         return activity;
     }
 
-    public Camera getCamera() {
+    public BoundCamera getCamera() {
         return camera;
     }
 
@@ -201,5 +203,9 @@ public class ResourcesManager {
 
     public ITextureRegion getCoinRegion() {
         return coinRegion;
+    }
+
+    public ITiledTextureRegion getPlayerRegion() {
+        return playerRegion;
     }
 }

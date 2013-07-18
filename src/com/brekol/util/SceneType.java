@@ -5,5 +5,5 @@ package com.brekol.util;
  * Date: 30.06.13
  */
 public enum SceneType {
-    SPLASH,MENU,GAME,LOADING
+    SPLASH, MENU, GAME, LOADING
 }

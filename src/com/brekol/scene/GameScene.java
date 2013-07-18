@@ -2,9 +2,7 @@ package com.brekol.scene;
 
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.*;
 import com.brekol.manager.SceneManager;
 import com.brekol.model.Player;
 import com.brekol.util.SceneType;
@@ -111,6 +109,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
     private void createPhysics() {
         physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, -17), false);
+        physicsWorld.setContactListener(contactListener());
         registerUpdateHandler(physicsWorld);
     }
 
@@ -159,7 +158,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                         protected void onManagedUpdate(float pSecondsElapsed) {
                             super.onManagedUpdate(pSecondsElapsed);
 
-                            if(player.collidesWith(this)){
+                            if (player.collidesWith(this)) {
                                 addToScore(10);
                                 this.setVisible(false);
                                 setIgnoreUpdate(true);
@@ -173,7 +172,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                     player = new Player(x, y, vertexBufferObjectManager, camera, physicsWorld) {
                         @Override
                         public void onDie() {
-                            if(!gameOverDisplayed){
+                            if (!gameOverDisplayed) {
                                 displayGameOverText();
                             }
                         }
@@ -208,14 +207,54 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         return false;
     }
 
-    private void createGameOverText(){
-        gameOverText = new Text(0,0,resourcesManager.getMediumFont(),"Game Over!",vertexBufferObjectManager);
+    private void createGameOverText() {
+        gameOverText = new Text(0, 0, resourcesManager.getMediumFont(), "Game Over!", vertexBufferObjectManager);
     }
 
-    private void displayGameOverText(){
+    private void displayGameOverText() {
         camera.setChaseEntity(null);
-        gameOverText.setPosition(camera.getCenterX(),camera.getCenterY());
+        gameOverText.setPosition(camera.getCenterX(), camera.getCenterY());
         attachChild(gameOverText);
         gameOverDisplayed = true;
     }
+
+    private ContactListener contactListener() {
+        ContactListener contactListener = new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                final Fixture x1 = contact.getFixtureA();
+                final Fixture x2 = contact.getFixtureB();
+
+                if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null) {
+                    if (x2.getBody().getUserData().equals("player")) {
+                        player.increaseFootContacts();
+                    }
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+                final Fixture x1 = contact.getFixtureA();
+                final Fixture x2 = contact.getFixtureB();
+
+                if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null) {
+                    if (x2.getBody().getUserData().equals("player")) {
+                        player.decreaseFootContacts();
+                    }
+                }
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
+        return contactListener;
+    }
+
 }

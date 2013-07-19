@@ -57,10 +57,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN = "coin";
 
     private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER = "player";
+    private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
+
     private Player player;
     private boolean firstTouch = false;
     private Text gameOverText;
     private boolean gameOverDisplayed = false;
+    private LevelCompleteWindow levelCompleteWindow;
 
     @Override
     public void createScene() {
@@ -70,6 +73,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         loadLevel(1);
         createGameOverText();
         setOnSceneTouchListener(this);
+        levelCompleteWindow = new LevelCompleteWindow();
     }
 
     @Override
@@ -181,20 +185,35 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                     };
                     levelObject = player;
 
+                } else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE)) {
+                    levelObject = new Sprite(x, y, resourcesManager.getCompleteStarRegion(), vertexBufferObjectManager) {
+                        @Override
+                        protected void onManagedUpdate(float pSecondsElapsed) {
+                            super.onManagedUpdate(pSecondsElapsed);
+                            if (player.collidesWith(this)) {
+                                levelCompleteWindow.display(LevelCompleteWindow.StarsCount.TWO, GameScene.this, camera);
+                                this.setVisible(false);
+                                this.setIgnoreUpdate(true);
+                            }
+                        }
+                    };
+                    levelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1,1,1.3f)));
                 } else {
                     throw new IllegalArgumentException();
                 }
 
-                levelObject.setCullingEnabled(true);
+            levelObject.setCullingEnabled(true);
 
-                return levelObject;
+            return levelObject;
 
-            }
-        });
-
-        levelLoader.loadLevelFromAsset(activity.getAssets(), "level/" + levelID + ".lvl");
-
+        }
     }
+
+    );
+
+    levelLoader.loadLevelFromAsset(activity.getAssets(),"level/"+levelID+".lvl");
+
+}
 
     @Override
     public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
@@ -231,10 +250,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                     if (x2.getBody().getUserData().equals("player")) {
                         player.increaseFootContacts();
                     }
-                    if(x1.getBody().getUserData().equals("platform3") && x2.getBody().getUserData().equals("player")){
+                    if (x1.getBody().getUserData().equals("platform3") && x2.getBody().getUserData().equals("player")) {
                         x1.getBody().setType(BodyDef.BodyType.DynamicBody);
                     }
-                    if(x1.getBody().getUserData().equals("platform2") && x2.getBody().getUserData().equals("player")){
+                    if (x1.getBody().getUserData().equals("platform2") && x2.getBody().getUserData().equals("player")) {
                         engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
                             @Override
                             public void onTimePassed(TimerHandler pTimerHandler) {

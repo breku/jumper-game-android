@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.BoundCamera;
-import org.andengine.engine.camera.Camera;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.ITexture;
@@ -19,7 +18,6 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
-import org.andengine.util.level.simple.SimpleLevelLoader;
 
 
 /**
@@ -37,8 +35,8 @@ public class ResourcesManager {
     private Font mediumFont;
 
     private ITextureRegion splashTextureRegion, menuBackgroundRegion, playButtonRegion, optionsButtonRegion,
-            platform1Region, platform2Region, platform3Region, coinRegion;
-    private ITiledTextureRegion playerRegion;
+            platform1Region, platform2Region, platform3Region, coinRegion, completeWindowRegion;
+    private ITiledTextureRegion playerRegion, completeStarRegion;
 
     private BitmapTextureAtlas splashTextureAtlas;
     private BuildableBitmapTextureAtlas menuTextureAtlas;
@@ -105,7 +103,9 @@ public class ResourcesManager {
         platform2Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform2.png");
         platform3Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "platform3.png");
         coinRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "coin.png");
+        completeWindowRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "levelCompleteWindow.png");
 
+        completeStarRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas,activity,"star.png",2,1);
         playerRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "player.png", 3, 1);
 
         try {
@@ -207,5 +207,13 @@ public class ResourcesManager {
 
     public ITiledTextureRegion getPlayerRegion() {
         return playerRegion;
+    }
+
+    public ITiledTextureRegion getCompleteStarRegion() {
+        return completeStarRegion;
+    }
+
+    public ITextureRegion getCompleteWindowRegion() {
+        return completeWindowRegion;
     }
 }

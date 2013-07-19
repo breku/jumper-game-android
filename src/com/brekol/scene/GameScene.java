@@ -7,6 +7,8 @@ import com.brekol.manager.SceneManager;
 import com.brekol.model.Player;
 import com.brekol.util.SceneType;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.ScaleModifier;
@@ -228,6 +230,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null) {
                     if (x2.getBody().getUserData().equals("player")) {
                         player.increaseFootContacts();
+                    }
+                    if(x1.getBody().getUserData().equals("platform3") && x2.getBody().getUserData().equals("player")){
+                        x1.getBody().setType(BodyDef.BodyType.DynamicBody);
+                    }
+                    if(x1.getBody().getUserData().equals("platform2") && x2.getBody().getUserData().equals("player")){
+                        engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
+                            @Override
+                            public void onTimePassed(TimerHandler pTimerHandler) {
+                                pTimerHandler.reset();
+                                engine.unregisterUpdateHandler(pTimerHandler);
+                                x1.getBody().setType(BodyDef.BodyType.DynamicBody);
+                            }
+                        }));
                     }
                 }
             }
